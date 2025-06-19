@@ -295,7 +295,7 @@ PROJECT ON PROJECT.EMP_ID = EMPLOYEE.EMP_ID
 
 **RIGHT JOIN**
 
-In SQL, RIGHT JOIN returns all the values from the values from the rows of right table and the matched values from
+In SQL, RIGHT JOIN returns all the values from the rows of right table and the matched values from
 the left table. If there is no matching in both tables, it will return NULL.
 
 ~~~ SQL
@@ -394,3 +394,191 @@ left join payment p
 on p.staffid = e.staffid
 
 ~~~
+
+**SQL Aggregate Functions**
+
+SQL aggregate functions are powerful tools used to perform calculations on a set of
+values, returning a single value that summarizes the data. They are commonly used in
+conjunction with the **GROUP BY** clause to group the data by one or more columns before
+applying the aggregate function.
+
+**Examples**
+
+~~~ SQL
+Select * from Employee
+
+select sum(Age) as [Sum of Age] from Employee
+
+Select Avg(Age) as [Average Age] from Employee 
+
+Select Min(Age) as [Min Age] from Employee
+
+Select Max(Age) as [Eldest] from Employee 
+
+Select top 3 (Age) as [Top Three] from Employee
+Order by Age desc
+
+Select top 3 (Age) as [Top Three] from Employee
+where Age < (select max(Age) from Employee)
+Order by Age desc
+~~~
+
+**More examples of syntaxes**
+
+~~~ SQL
+
+
+--- Analysis
+
+select * from salary 
+
+--- Get Top 3 highest paid employee
+
+select top 3 * from (
+	select staffid, firstname, lastname, salary
+		from salary) as Sal
+order by salary desc
+
+select top 3 * from salary 
+order by salary desc
+
+-----Get second highest paid employee----
+
+select max(salary) as secondhighestsalary
+from salary
+where salary < (select max(salary) from salary)
+
+select top 1 staffid, firstname, lastname
+
+---OR----
+
+select top 3 staffid, firstname, lastname, salary
+from salary
+order by salary desc
+
+---Lowest--
+
+select top 3 staffid, firstname, lastname, salary
+from salary
+order by salary asc
+
+----Average salary by department
+
+select department, avg(salary) as AvgSalary
+	from (
+		select department, salary
+			from salary) as Deptsalary
+group by department
+order by department
+
+---OR----
+
+select department, avg(salary) as AvgSalary
+from salary
+group by department
+
+~~~
+
+**View in SQL**
+
+* An SQL View is a virtual table that is created based on the result set of a SQL query. Unlike a regular table, a view does not store data itself; instead, it dynamically retrieves data from one or more underlying tables whenever the view is queried.
+  
+* A view behaves like a table in SQL, allowing you to select, update, insert, and delete data (with some
+limitations).
+
+* The data in a view is not stored physically; it is generated dynamically when the view is accessed.
+
+* A view is defined using a SELECT statement that can join multiple tables, filter rows, and select specific columns.
+
+_**Security**_
+
+* Views can be used to restrict access to certain data in a table by exposing only specific columns or rows to the user.
+
+* For example, you can create a view that only shows certain fields of a sensitive table, hiding the rest from the user.
+
+_**Simplicity**_
+
+* Views simplify complex queries. Instead of writing a complex query repeatedly, you can create a view and use it as a simple table.
+
+* This is particularly useful in applications where complex logic needs to be reused.
+
+**Example**
+
+~~~ SQL
+
+-----sql view----
+
+create view vw_emplysala_tbl
+as
+Select employee.staffid,
+       employee.FirstName,
+	   employee.gender,
+	   employee.hiredate,
+	   salary.salary_id,
+	   salary.department,
+	   salary.salary
+from employee
+join salary
+on salary.Staffid = employee.staffid
+
+select * from vw_emplysala_tbl
+
+~~~
+
+**Lessons on Union and Union all**
+
+**Union** will remove duplicates from the two or more tables _while_ **Union all** will not
+
+**Example**
+
+~~~ SQL
+
+-----Union lesson----
+
+select * from [DSA Mall Ikeja]
+union
+select * from [DSA Mall Lekki]
+union
+select * from [DSA Mall Marina]
+
+----Union All lesson-----
+
+select * from [DSA Mall Ikeja]
+union all
+select * from [DSA Mall Lekki]
+union all
+select * from [DSA Mall Marina]
+
+~~~
+
+~~~ SQL
+
+Create view vw_DSA_Mall_Transaction as
+select
+	'DSA MALL IKEJA' as Branch, customerid as [Customer Id],
+	firstname as [First Name], lastname as [Last Name],
+	Customer_gender as [Gender], TransactionDate as [Date],
+	[Address], Transaction_Amount as [Transaction Amount]
+from [DSA Mall Ikeja]
+union
+select
+	'DSA MALL LEKKI' as Branch, customerid as [Customer Id],
+	firstname as [First Name], lastname as [Last Name],
+	Customer_gender as [Gender], TransactionDate as [Date],
+	[Address], Transaction_Amount as [Transaction Amount]
+from [DSA Mall Lekki]
+union
+select
+	'DSA MALL MARINA' as Branch, customerid as [Customer Id],
+	firstname as [First Name], lastname as [Last Name],
+	Customer_gender as [Gender], TransactionDate as [Date],
+	[Address], Transaction_Amount as [Transaction Amount]
+from [DSA Mall Marina]
+
+select * from vw_DSA_Mall_Transaction
+
+~~~
+
+**Result**
+
+<img width="500" alt="image" src="https://github.com/user-attachments/assets/f032d008-f272-4396-8903-31ffc0632b7a" />
